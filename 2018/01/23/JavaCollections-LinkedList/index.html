@@ -5,7 +5,7 @@
   
 
 
-<html class="theme-next muse use-motion" lang="">
+<html class="theme-next muse use-motion" lang="zh-Hans">
 <head>
   <meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="Java SE," />
 
 
 
@@ -80,13 +80,15 @@
 
 
 <meta name="description" content="另一个常用的数据结构——LinkedList，也是我们熟悉的链表。和 ArrayList 一样，LinkedList 也是一个线性表，不同的是 LinkedList 中维护的结构并不是内存连续的数组，而是由多个Node组成的链表。这赋予了 LinkedList 易于修改节点的特性，同时也牺牲了快速随机访问的性能。  内部结构LinkedList 中主要维护的变量就三个：1234567891011">
+<meta name="keywords" content="Java SE">
 <meta property="og:type" content="article">
 <meta property="og:title" content="JavaCollections-LinkedList">
 <meta property="og:url" content="http://yoursite.com/2018/01/23/JavaCollections-LinkedList/index.html">
 <meta property="og:site_name" content="皮皮的猪圈">
 <meta property="og:description" content="另一个常用的数据结构——LinkedList，也是我们熟悉的链表。和 ArrayList 一样，LinkedList 也是一个线性表，不同的是 LinkedList 中维护的结构并不是内存连续的数组，而是由多个Node组成的链表。这赋予了 LinkedList 易于修改节点的特性，同时也牺牲了快速随机访问的性能。  内部结构LinkedList 中主要维护的变量就三个：1234567891011">
+<meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/images/JavaCollections-LinkedList/Node_Insert.jpg">
-<meta property="og:updated_time" content="2018-01-23T13:53:10.000Z">
+<meta property="og:updated_time" content="2018-01-23T14:46:31.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JavaCollections-LinkedList">
 <meta name="twitter:description" content="另一个常用的数据结构——LinkedList，也是我们熟悉的链表。和 ArrayList 一样，LinkedList 也是一个线性表，不同的是 LinkedList 中维护的结构并不是内存连续的数组，而是由多个Node组成的链表。这赋予了 LinkedList 易于修改节点的特性，同时也牺牲了快速随机访问的性能。  内部结构LinkedList 中主要维护的变量就三个：1234567891011">
@@ -106,7 +108,7 @@
     motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
     duoshuo: {
       userId: '0',
-      author: 'Author'
+      author: '博主'
     },
     algolia: {
       applicationID: '',
@@ -138,7 +140,7 @@
 
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage" lang="">
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
 
   
   
@@ -186,7 +188,7 @@
             
               <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
             
-            Home
+            首页
           </a>
         </li>
       
@@ -196,7 +198,7 @@
             
               <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
             
-            Tags
+            标签
           </a>
         </li>
       
@@ -206,7 +208,7 @@
             
               <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
             
-            Archives
+            归档
           </a>
         </li>
       
@@ -270,9 +272,9 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               
-                <span class="post-meta-item-text">Posted on</span>
+                <span class="post-meta-item-text">发表于</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-23T21:47:54+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-23T21:47:54+08:00">
                 2018-01-23
               </time>
             
@@ -357,6 +359,12 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/Java-SE/" rel="tag"># Java SE</a>
+          
+        </div>
+      
 
       
       
@@ -428,10 +436,10 @@
       
         <ul class="sidebar-nav motion-element">
           <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            Table of Contents
+            文章目录
           </li>
           <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            Overview
+            站点概览
           </li>
         </ul>
       
@@ -452,13 +460,22 @@
                 <a href="/archives/">
               
                   <span class="site-state-item-count">2</span>
-                  <span class="site-state-item-name">posts</span>
+                  <span class="site-state-item-name">日志</span>
                 </a>
               </div>
             
 
             
 
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
             
 
           </nav>
@@ -518,7 +535,7 @@
 </div>
 
 
-  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
 
 
 
@@ -526,7 +543,7 @@
 
 
 
-  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
 
 
 
