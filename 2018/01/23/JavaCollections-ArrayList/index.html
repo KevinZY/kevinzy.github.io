@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Java程序的核心就是那些在启动时和运行中所创建的对象，如何管理这些对象是一项非常重要的工作。既要方便存储，又要方便读取，有时候还需要对对象进行排序，根据不同的场合，需要将同一类的对象存放在一起，就形成了容器的概念。   Java类库为我们提供了一套相当完整的容器来解决程序运行中对象的存储问题，其中最常用的有 List、Set、Queue以及 Map。上面是一张完整的 Java 框架类库图，其中">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JavaCollections-ArrayList">
+<meta property="og:url" content="http://yoursite.com/2018/01/23/JavaCollections-ArrayList/index.html">
+<meta property="og:site_name" content="皮皮的猪圈">
+<meta property="og:description" content="Java程序的核心就是那些在启动时和运行中所创建的对象，如何管理这些对象是一项非常重要的工作。既要方便存储，又要方便读取，有时候还需要对对象进行排序，根据不同的场合，需要将同一类的对象存放在一起，就形成了容器的概念。   Java类库为我们提供了一套相当完整的容器来解决程序运行中对象的存储问题，其中最常用的有 List、Set、Queue以及 Map。上面是一张完整的 Java 框架类库图，其中">
+<meta property="og:image" content="http://yoursite.com/images/JavaCollections-ArrayList/Collections.jpg">
+<meta property="og:updated_time" content="2018-01-23T13:42:01.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JavaCollections-ArrayList">
+<meta name="twitter:description" content="Java程序的核心就是那些在启动时和运行中所创建的对象，如何管理这些对象是一项非常重要的工作。既要方便存储，又要方便读取，有时候还需要对对象进行排序，根据不同的场合，需要将同一类的对象存放在一起，就形成了容器的概念。   Java类库为我们提供了一套相当完整的容器来解决程序运行中对象的存储问题，其中最常用的有 List、Set、Queue以及 Map。上面是一张完整的 Java 框架类库图，其中">
+<meta name="twitter:image" content="http://yoursite.com/images/JavaCollections-ArrayList/Collections.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/01/23/JavaCollections-ArrayList/"/>
+
+
+
+
+
+  <title>JavaCollections-ArrayList | 皮皮的猪圈</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">皮皮的猪圈</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/23/JavaCollections-ArrayList/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kevin Zhang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="皮皮的猪圈">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">JavaCollections-ArrayList</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-23T00:22:24+08:00">
+                2018-01-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>Java程序的核心就是那些在启动时和运行中所创建的对象，如何管理这些对象是一项非常重要的工作。既要方便存储，又要方便读取，有时候还需要对对象进行排序，根据不同的场合，需要将同一类的对象存放在一起，就形成了容器的概念。</p>
+</blockquote>
+<p><img src="/images/JavaCollections-ArrayList/Collections.jpg" alt="Java 集合框架"></p>
+<p>Java类库为我们提供了一套相当完整的容器来解决程序运行中对象的存储问题，其中最常用的有 List、Set、Queue以及 Map。上面是一张完整的 Java 框架类库图，其中有许多接口和抽象类，他们定义了不同种类基础容器的行为，这个系列的文章将从源码的角度解释图中常用的集合类的实现以及使用。</p>
+<h2 id="线性的存储"><a href="#线性的存储" class="headerlink" title="线性的存储"></a>线性的存储</h2><p>ArrayList 其实是一个典型的线性表，从名字也不难看出它与数组有莫大的关联，其实 ArrayList 内部本身就是维护了一个数组，所有的插入、删除等操作都是基于这个数组实现的。</p>
+<p>首先看一下 ArrayList 中的变量定义:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ArrayList</span>&lt;<span class="title">E</span>&gt; <span class="keyword">extends</span> <span class="title">AbstractList</span>&lt;<span class="title">E</span>&gt; </span></span><br><span class="line"><span class="class">  <span class="keyword">implements</span> <span class="title">List</span>&lt;<span class="title">E</span>&gt;, <span class="title">RandomAccess</span>, <span class="title">Cloneable</span>, <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> DEFAULT_CAPACITY = <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Object[] EMPTY_ELEMENTDATA = &#123;&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Object[] DEFAULTCAPACITY_EMPTY_ELEMENTDATA = &#123;&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAX_ARRAY_SIZE = Integer.MAX_VALUE - <span class="number">8</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">transient</span> Object[] elementData;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> size;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>除了一些预定义的常量，ArrayList 中一共就两个变量：用于存放对象引用的数组<code>elementData</code>和标识个数的<code>size</code>。值得区分一下的概念是 size 和 capacity，size 表示的是当前 ArrayList 中所存放有效对象的个数，而 capacity 表示的是当前 elementData 数组的容量（即数组大小）。众所周知数组的长度一旦被指定就无法更改，既然 ArrayList 底层使用数组来实现，那它又是如何做到在被调用<code>add()</code>方法时看上去没有容量限制的呢？答案就是不断的比较 size 和 capacity，然后创建新的数组，再将原数组的内容复制过去，这在ArrayList内部称为<em>扩容</em>操作。</p>
+<h2 id="对象的存放"><a href="#对象的存放" class="headerlink" title="对象的存放"></a>对象的存放</h2><p>ArrayList共有三个构造器，他们的作用都是初始化elementData数组：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// NO.1</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ArrayList</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>(<span class="number">10</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// NO.2</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ArrayList</span><span class="params">(<span class="keyword">int</span> initialCapacity)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>();</span><br><span class="line">    <span class="keyword">if</span> (initialCapacity &lt; <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Illegal Capacity: "</span>+ initialCapacity);</span><br><span class="line">    <span class="keyword">this</span>.elementData = <span class="keyword">new</span> Object[initialCapacity];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// NO.3</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ArrayList</span><span class="params">(Collection&lt;? extends E&gt; c)</span> </span>&#123;</span><br><span class="line">    elementData = c.toArray();</span><br><span class="line">    size = elementData.length;</span><br><span class="line">    <span class="keyword">if</span> (elementData.getClass() != Object[].class)</span><br><span class="line">       elementData = Arrays.copyOf(elementData, size, Object[].class);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>前两个构造器通过指定的capacity来初始化一个空的数组：<code>this.elementData = new Object[initialCapacity]</code>，如果没有<code>initialCapacity</code>参数则默认为10。</p>
+<blockquote>
+<p>tips: 在新建一个ArrayList时可以预估需要的大小，以<code>new ArrayList(20)</code>这种形式调用，可以避免在使用ArrayList时多次扩容。</p>
+</blockquote>
+<p>第三个构造器接收一个Collection参数，如果你有仔细看过文章开头的集合框架图不难发现ArrayList是Collection的一种实现，这个构造器表示可以接收Collection接口的所有实现类型，并将其转换为自身类型（ArrayList）进行存储。</p>
+<h3 id="扩容与移位"><a href="#扩容与移位" class="headerlink" title="扩容与移位"></a>扩容与移位</h3><p>要想将对象放入 ArrayList 中需要调用<code>add(E)</code>或者<code>add(int, E)</code>方法，前者将对象按顺序放到末尾，后者可以指定放置的位置。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//...</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">add</span><span class="params">(E e)</span> </span>&#123;</span><br><span class="line">        ensureCapacityInternal(size + <span class="number">1</span>);  <span class="comment">// Increments modCount!!</span></span><br><span class="line">        elementData[size++] = e;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//...</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(<span class="keyword">int</span> index, E element)</span> </span>&#123;</span><br><span class="line">        rangeCheckForAdd(index);</span><br><span class="line"></span><br><span class="line">        ensureCapacityInternal(size + <span class="number">1</span>);  <span class="comment">// Increments modCount!!</span></span><br><span class="line">        System.arraycopy(elementData, index, elementData, index + <span class="number">1</span>,</span><br><span class="line">                         size - index);</span><br><span class="line">        elementData[index] = element;</span><br><span class="line">        size++;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>在调用两种 add 方法时都需要先调用<code>ensureCapacityInternal</code>，这个方法的做用是将数组进行扩容。由于在真正扩容之前 JDK 会进行一些逻辑检查和判断，最终调用到<code>grow()</code>函数，出于篇幅考虑将一些函数的调用关系省略掉，有兴趣的朋友可以自行查阅源码。先看看<code>grow()</code>函数中关键的部分：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">grow</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// overflow-conscious code</span></span><br><span class="line">    <span class="keyword">int</span> oldCapacity = elementData.length;</span><br><span class="line">    <span class="keyword">int</span> newCapacity = oldCapacity + (oldCapacity &gt;&gt; <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">if</span> (newCapacity - minCapacity &lt; <span class="number">0</span>)</span><br><span class="line">        newCapacity = minCapacity;</span><br><span class="line">    <span class="keyword">if</span> (newCapacity - MAX_ARRAY_SIZE &gt; <span class="number">0</span>)</span><br><span class="line">        newCapacity = hugeCapacity(minCapacity);</span><br><span class="line">    <span class="comment">// minCapacity is usually close to size, so this is a win:</span></span><br><span class="line">    elementData = Arrays.copyOf(elementData, newCapacity);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到参数 minCapacity 只是一个“建议”值，ArrayList 默认每次扩容为当前容量的1.5倍：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> newCapacity = oldCapacity + (oldCapacity &gt;&gt; <span class="number">1</span>);</span><br></pre></td></tr></table></figure></p>
+<p>在扩充到1.5倍之后如果还没有达到 minCapacity 时，便会采用 minCapacity 的值，最后调用 <code>Arrays.copyOf(elementData, newCapacity);</code>将整个数组进行拷贝。<br>回到<code>add(int, E)</code>方法，数组扩容完后，需要在指定的位置插入元素，接着便调用了<code>System.arraycopy</code>，根据参数可以看出这一步将 elementData 数组第<code>index</code>之后的元素全部向后移了一位，再在 index 位置插入新元素。<br>至此，对象的存放完成，通过对扩容和移位的分析，可以看出基于数组实现的 ArrayList 在对象的插入操作上效率并不高，但是数组的优点是快速的随机访问，在接下来的对象获取方法中将可以看到 ArrayList 很好的继承了数组的这一特性。</p>
+<h2 id="对象的获取"><a href="#对象的获取" class="headerlink" title="对象的获取"></a>对象的获取</h2><p>ArrayList 最常用的<code>get(int index)</code>方法一共只有两行：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> E <span class="title">get</span><span class="params">(<span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">    rangeCheck(index);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> elementData(index);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//...</span></span><br><span class="line"><span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line"><span class="function">E <span class="title">elementData</span><span class="params">(<span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (E) elementData[index];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在检查完参数 index 的范围之后，直接就返回 index 位置上的元素，非常快速。</p>
+<p>另一个获取对象有关的常用函数是<code>indexOf(Object o)</code>，到这里读者应该可以想到基于数组的 ArrayList 是怎样查找元素在数组中的下标了，遍历：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">indexOf</span><span class="params">(Object o)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (o == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; size; i++)</span><br><span class="line">            <span class="keyword">if</span> (elementData[i]==<span class="keyword">null</span>)</span><br><span class="line">                <span class="keyword">return</span> i;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; size; i++)</span><br><span class="line">            <span class="keyword">if</span> (o.equals(elementData[i]))</span><br><span class="line">                <span class="keyword">return</span> i;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>通过源码可以观察到比较有趣的一点，<code>indexOf</code>的参数允许为 <code>null</code>，并且如果数组中有值为 <code>null</code>的元素（在 size 范围以内）时将返回下标。</p>
+<p>调用<code>remove(int index)</code>函数同样会使数组中多个元素位置变动：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> E <span class="title">remove</span><span class="params">(<span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">    rangeCheck(index);</span><br><span class="line"></span><br><span class="line">    modCount++;</span><br><span class="line">    E oldValue = elementData(index);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> numMoved = size - index - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span> (numMoved &gt; <span class="number">0</span>)</span><br><span class="line">        System.arraycopy(elementData, index+<span class="number">1</span>, elementData, index,</span><br><span class="line">                         numMoved);</span><br><span class="line">    elementData[--size] = <span class="keyword">null</span>; <span class="comment">// clear to let GC do its work</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> oldValue;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>同样是调用 <code>arraycopy</code>方法，只不过拷贝的位置与 add 时相反。同时注意到<code>elementData[--size] = null;</code>是非常关键的，正如注释所说，进行remove操作以后，数组最后一个位置上引用的对象逻辑上已经被“移除”，但是实际数组还保持着对象的引用，这会导致 GC 无法将其回收，造成内存泄露。</p>
+<h2 id="功能性函数"><a href="#功能性函数" class="headerlink" title="功能性函数"></a>功能性函数</h2><p>介绍完了主要操作函数，ArrayList 封装的一些功能函数也非常有意思。</p>
+<ul>
+<li><p>trimToSize：<br>这个函数的作用是将数组容量（capacity）修整到 size 的大小。譬如ArrayList在大量读入对象之后又进行了许多移除操作，并且预计在今后很长一段时间容量都将保持在较小范围内，这时可以手动都用<code>trimToSize()</code>来节约内存空间。<br>`java<br>  public void trimToSize() {</p>
+<pre><code>modCount++;
+if (size &lt; elementData.length) {
+    elementData = (size == 0)
+      ? EMPTY_ELEMENTDATA
+      : Arrays.copyOf(elementData, size);
+}
+</code></pre><p>  }<br>`</p>
+</li>
+<li><p>addAll:<br>addAll 方法接收一个实现了 Collection 接口的类型，并将其添加到当前 ArrayList 末尾：<br>`java<br>  public boolean addAll(Collection&lt;? extends E&gt; c) {</p>
+<pre><code>Object[] a = c.toArray();
+int numNew = a.length;
+ensureCapacityInternal(size + numNew);  // Increments modCount
+System.arraycopy(a, 0, elementData, size, numNew);
+size += numNew;
+return numNew != 0;
+</code></pre><p>  }<br><code>其实质最终还是调用了 arraycopy 方法，</code>ArrayList.addAll()<code>方法很容易让人联想到定义在 Collections 中的 addAll 方法，在没有特殊要求的时候两者可以互换，个别情况下由于其实现逻辑不同两者的性能会有一些差异，这里不做过多讨论，开发者可以根据编程风格和规范自行选择，</code>Collections.addAll()`的定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function"><span class="keyword">boolean</span> <span class="title">addAll</span><span class="params">(Collection&lt;? <span class="keyword">super</span> T&gt; c, T... elements)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">boolean</span> result = <span class="keyword">false</span>;</span><br><span class="line">    <span class="keyword">for</span> (T element : elements)</span><br><span class="line">        result |= c.add(element);</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>ArrayList 正如其名字，是实现了 List接口规范，底层采用数组的一个集合类。ArrayList 继承了数组的所有优缺点，并且在使用上针对 List 接口进行了封装，例如在指定位置插入、删除元素等。开发人员在使用时可以完全按照 List 接口定义的规范进行调用，但是知道其底层实现细节对程序调优、不同集合类之间的选择有很大的帮助。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/01/23/JavaCollections-LinkedList/" rel="prev" title="JavaCollections-LinkedList">
+                JavaCollections-LinkedList <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Kevin Zhang</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#线性的存储"><span class="nav-number">1.</span> <span class="nav-text">线性的存储</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对象的存放"><span class="nav-number">2.</span> <span class="nav-text">对象的存放</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#扩容与移位"><span class="nav-number">2.1.</span> <span class="nav-text">扩容与移位</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对象的获取"><span class="nav-number">3.</span> <span class="nav-text">对象的获取</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#功能性函数"><span class="nav-number">4.</span> <span class="nav-text">功能性函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小结"><span class="nav-number">5.</span> <span class="nav-text">小结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kevin Zhang</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
