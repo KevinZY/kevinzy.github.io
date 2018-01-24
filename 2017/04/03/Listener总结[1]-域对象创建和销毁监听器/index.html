@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Java Web," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="​从开年到现在两个月时间，一直想慢慢开始写点东西，将工作以来学到的知识和技能进行总结。但是偏偏年后项目比较急，一个集中刻录项目就写了一个月左右，但是得到的收获也不少。好不容易清明有了一点的空闲，就将之前的一些笔记和开发中遇到的问题好好的总结一下吧。 ​万事开头难，能提笔开始写这篇文章，相信以后能养成定时总结的习惯，也希望能和大家进行探讨，有错误和疏漏的地方还请不吝赐教。 ​废话也就不多说了，今天主">
+<meta name="keywords" content="Java Web">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Listener总结[1]-域对象创建和销毁监听器">
+<meta property="og:url" content="http://kevinzy.github.io/2017/04/03/Listener总结[1]-域对象创建和销毁监听器/index.html">
+<meta property="og:site_name" content="Hyperion">
+<meta property="og:description" content="​从开年到现在两个月时间，一直想慢慢开始写点东西，将工作以来学到的知识和技能进行总结。但是偏偏年后项目比较急，一个集中刻录项目就写了一个月左右，但是得到的收获也不少。好不容易清明有了一点的空闲，就将之前的一些笔记和开发中遇到的问题好好的总结一下吧。 ​万事开头难，能提笔开始写这篇文章，相信以后能养成定时总结的习惯，也希望能和大家进行探讨，有错误和疏漏的地方还请不吝赐教。 ​废话也就不多说了，今天主">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://kevinzy.github.io/images/Listener_1/Tomcat_Output.png">
+<meta property="og:image" content="http://kevinzy.github.io/images/Listener_1/Customize_Listener.png">
+<meta property="og:updated_time" content="2018-01-24T13:14:26.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Listener总结[1]-域对象创建和销毁监听器">
+<meta name="twitter:description" content="​从开年到现在两个月时间，一直想慢慢开始写点东西，将工作以来学到的知识和技能进行总结。但是偏偏年后项目比较急，一个集中刻录项目就写了一个月左右，但是得到的收获也不少。好不容易清明有了一点的空闲，就将之前的一些笔记和开发中遇到的问题好好的总结一下吧。 ​万事开头难，能提笔开始写这篇文章，相信以后能养成定时总结的习惯，也希望能和大家进行探讨，有错误和疏漏的地方还请不吝赐教。 ​废话也就不多说了，今天主">
+<meta name="twitter:image" content="http://kevinzy.github.io/images/Listener_1/Tomcat_Output.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://kevinzy.github.io/2017/04/03/Listener总结[1]-域对象创建和销毁监听器/"/>
+
+
+
+
+
+  <title>Listener总结[1]-域对象创建和销毁监听器 | Hyperion</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hyperion</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://kevinzy.github.io/2017/04/03/Listener总结[1]-域对象创建和销毁监听器/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kevin Zhang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hyperion">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Listener总结[1]-域对象创建和销毁监听器</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-03T21:16:08+08:00">
+                2017-04-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>​从开年到现在两个月时间，一直想慢慢开始写点东西，将工作以来学到的知识和技能进行总结。但是偏偏年后项目比较急，一个集中刻录项目就写了一个月左右，但是得到的收获也不少。好不容易清明有了一点的空闲，就将之前的一些笔记和开发中遇到的问题好好的总结一下吧。</p>
+<p>​万事开头难，能提笔开始写这篇文章，相信以后能养成定时总结的习惯，也希望能和大家进行探讨，有错误和疏漏的地方还请不吝赐教。</p>
+<p>​废话也就不多说了，今天主要总结一下 JavaWeb 开发中最基本的三大类：Listener、Filter与 Servlet中的 Listener。对于 JavaWeb 程序来讲，这三个类是维持其基本运作的基石，在现代开发中，各种框架（最常见的 Spring、Struts2、Hibernate等）为程序员搭建好了舒适的开发环境，以至于让人忽略了之三大类能做到的许多事情。互联网时代每时每刻都在变化，但是这些变化也是基于一些不变的东西，学习一门技术也要从最基本的、不变的底层学起，往上才能开枝散叶，正所谓万变不离其宗。</p>
+<h2 id="Listener"><a href="#Listener" class="headerlink" title="Listener"></a>Listener</h2><p>​Listener 是专门用来监听另一个 Java 对象方法的调用或属性改变，实现了特定接口的特殊类 。刚好最近在阅读有关设计模式的书籍，而这里 Listener 正是通过<em>观察者</em>模式进行实现的，而在前一个月做的项目中有多处都用到了这种设计模式。</p>
+<p>​在 JavaWeb 应用中，被监听的对象主要是：<em>ServletContext</em>、<em>HttpSession</em>、<em>ServletRequest</em>。</p>
+<p>​针对以上三个对象的操作，Listener 又被划分成为三种类型：</p>
+<ul>
+<li>域对象创建和销毁的事件监听器</li>
+<li>域对象中属性改变的事件监听器</li>
+<li><em>绑定到 HttpSession域中的某个对象</em>的状态的事件监听器</li>
+</ul>
+<h3 id="域对象创建和销毁的事件监听器"><a href="#域对象创建和销毁的事件监听器" class="headerlink" title="域对象创建和销毁的事件监听器"></a>域对象创建和销毁的事件监听器</h3><p>​这类Listener的作用是监听对象的创建和销毁，自定义的Listener 类需要实现特定接口中的两个方法：XXXInitialized，XXXDestroyed。下面的代码显示了针对不同的被监听对象的Listener实现：</p>
+<p>web.xml</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">listener</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">listener-class</span>&gt;</span>com.yzhang.listener.test.MyServletContextListener<span class="tag">&lt;/<span class="name">listener-class</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">listener</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">listener</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">listener-class</span>&gt;</span>com.yzhang.listener.test.MyHttpSessionListener<span class="tag">&lt;/<span class="name">listener-class</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">listener</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">listener</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">listener-class</span>&gt;</span>com.yzhang.listener.test.MyServletRequestListener<span class="tag">&lt;/<span class="name">listener-class</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">listener</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>MyServletContextListener</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//***</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyServletContextListener</span> <span class="keyword">implements</span> <span class="title">ServletContextListener</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Logger logger = Logger.getLogger(MyServletContextListener.class);</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">contextInitialized</span><span class="params">(ServletContextEvent sce)</span> </span>&#123;</span><br><span class="line">        logger.debug(<span class="string">"servletContextInitialized"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">contextDestroyed</span><span class="params">(ServletContextEvent sce)</span> </span>&#123;</span><br><span class="line">        logger.debug(<span class="string">"servletContextDestroyed"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>MyHttpSessionListener</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//***</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyHttpSessionListener</span> <span class="keyword">implements</span> <span class="title">HttpSessionListener</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Logger logger = Logger.getLogger(MyHttpSessionListener.class);</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sessionCreated</span><span class="params">(HttpSessionEvent se)</span> </span>&#123;</span><br><span class="line">        logger.debug(<span class="string">"sessionCreated"</span>);</span><br><span class="line">        logger.debug(se.getSession().getId());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sessionDestroyed</span><span class="params">(HttpSessionEvent se)</span> </span>&#123;</span><br><span class="line">        logger.debug(<span class="string">"sessionDestroyed"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>MyServletRequestListener</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyServletRequestListener</span> <span class="keyword">implements</span> <span class="title">ServletRequestListener</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Logger logger = Logger.getLogger(MyServletRequestListener.class);</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">requestInitialized</span><span class="params">(ServletRequestEvent sre)</span> </span>&#123;</span><br><span class="line">        logger.debug(<span class="string">"requestInitialized"</span>);</span><br><span class="line">        HttpServletRequest request = (HttpServletRequest)sre.getServletRequest();</span><br><span class="line">        logger.debug(request.getRequestURL());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">requestDestroyed</span><span class="params">(ServletRequestEvent sre)</span> </span>&#123;</span><br><span class="line">        logger.debug(<span class="string">"requestDestroyed"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>​ServletContextListener 监视的是整个 Servlet 容器对象，当 Servlet 容器启动时，监听器的<code>contextInitialized</code>方法被调用，当这个方法被调用时，其实传达的是这么一条信息：我（Servlet 容器）已经启动完成，你（对应的程序）可以开始你自己的工作了。所以在<code>contextInitialized</code>中往往做一些初始化的工作，同理<code>contextDestroyed</code>在 Servlet 容器对象被销毁时调用，可做一些收尾工作。</p>
+<p>​HttpSessionListener监视的是 Session 对象，在整个 web 应用生命周期中，每当有 Session 被创建和销毁时，都会调用其中的<code>sessionCreated</code>或<code>sessionDestroyed</code>，在方法中可以通过<code>HttpSessionEvent.getSession()</code>来获取 Session 的详细信息。</p>
+<p>​ServletRequestListener与 HttpSessionListener 大致相同，区别在于其监视的是 ServletRequest 对象，通俗来讲：每当有一次页面访问请求到达，都会创建一个ServletRequest 对象，从而导致<code>requestInitialized</code>方法被调用，而当这次请求返回以后，ServletRequest 对象被销毁时，<code>requestDestroyed</code>方法将被调用。</p>
+<p>​进行一次实验，启动 Tomcat -&gt; 访问index.jsp ，将得到下面的输出：</p>
+<p><img src="/images/Listener_1/Tomcat_Output.png" alt="Tomcat Output.png"></p>
+<p>​很容易可以分析出各监听器的调用顺序，这里就不过多赘述。</p>
+<h4 id="ServletContextListener-的应用———-Spring-的入口"><a href="#ServletContextListener-的应用———-Spring-的入口" class="headerlink" title="ServletContextListener 的应用——— Spring 的入口"></a>ServletContextListener 的应用——— Spring 的入口</h4><p>​大家肯定都记得在使用 Spring 的时候需要在 Web.xml 中配置一个 Spring 的监听器：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">listener</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">listener-class</span>&gt;</span>org.springframework.web.context.ContextLoaderListener<span class="tag">&lt;/<span class="name">listener-class</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">listener</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">context-param</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">param-name</span>&gt;</span>contextConfigLocation<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">param-value</span>&gt;</span>classpath:/applicationContext.xml<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">context-param</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>​context-param 是 Spring 的配置文件位置，在 Spring 启动后会根据<code>applicationContext.xml</code>中的配置对 Bean 进行实例化，这里主要观察<code>org.springframework.web.context.ContextLoaderListener</code>这个监听器。</p>
+<p>​当我们进入到这个监听器内部会发现，这个监听器正是实现了 ServletContextListener，这也符合之前所讲：在<code>contextInitialized</code>中程序可以进行自己的初始化工作了。在这里Spring就会开始自己实际的工作。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//...</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ContextLoaderListener</span> <span class="keyword">extends</span> <span class="title">ContextLoader</span> <span class="keyword">implements</span> <span class="title">ServletContextListener</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ContextLoaderListener</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ContextLoaderListener</span><span class="params">(WebApplicationContext context)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(context);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">contextInitialized</span><span class="params">(ServletContextEvent event)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.initWebApplicationContext(event.getServletContext());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">contextDestroyed</span><span class="params">(ServletContextEvent event)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.closeWebApplicationContext(event.getServletContext());</span><br><span class="line">        ContextCleanupListener.cleanupAttributes(event.getServletContext());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>​而在<code>initWebApplicationContext</code>方法中将会进行 Bean 的初始化等工作。</p>
+<hr>
+<p>​下面看一个在项目中实际遇到过的问题，新手常常会犯这种错误，如果没有理解 Listener 的作用时间和范围，往往不能很快找出错误原因。</p>
+<blockquote>
+<p>在一个刻录系统需要维护多条线程，每条线程分别与不同的刻录机服务通过 WebService 进行通信。在程序启动时，需要从数据库中获取用户配置过的刻录机信息，并启动相应的线程。这里可以很快想到的做法是实现一个 ServletContextListener，并在<code>contextInitialized</code>中调用<code>PrinterService.listAllLivePrinter()</code>方法获取活跃的刻录机列表，然后开启线程。</p>
+</blockquote>
+<p>​然而事与愿违，在程序启动时报错：找不到 PrinterService。问题就出在自己实现的ServletContextListener和 Spring 的ContextLoaderListener同样都是对 Servlet 容器的监听，那么谁先执行呢？结论是在 web.xml中谁排在前面谁先执行。</p>
+<p>​这里犯的第一个错误就是将自定义的 ServletContextListener放在了 Spring 的 Listener 之前。在进一步的测试中，把自定义 Listener 放到 Spring 的 Listener 之后，并且在<code>contextInitialized</code>方法中以如下形式调用：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> UserService userService;</span><br><span class="line"><span class="keyword">private</span> WebApplicationContext springContext;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">contextInitialized</span><span class="params">(ServletContextEvent sce)</span> </span>&#123;</span><br><span class="line">        logger.debug(<span class="string">"servletContextInitialized"</span>);</span><br><span class="line">        springContext = WebApplicationContextUtils.getWebApplicationContext(sce.getServletContext());</span><br><span class="line">        <span class="keyword">if</span> (springContext!=<span class="keyword">null</span>)&#123;</span><br><span class="line">            logger.debug(<span class="string">"get Spring ApplicationContext success"</span>);</span><br><span class="line">            userService = (UserService) springContext.getBean(<span class="string">"userService"</span>);</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            logger.error(<span class="string">"get SpringContext failed"</span>);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        userService.listAllAlive();</span><br><span class="line">        logger.debug(<span class="string">"call userService.listAllAlive() success"</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>​WebApplicationContext 描述的是  Web 应用中的Spring上下文，这里需要通过直接获取 bean 的方式得到 userService 实例对象。修改以后的控制台输出：</p>
+<p><img src="/images/Listener_1/Customize_Listener.png" alt="Customize_Listener.png"></p>
+<p>​可以看到，在自定义的 Listener 中成功获取到userService 并调用了<code>userService.listAllAlive()</code>。稍作总结，在这个例子中，想要在程序初始化时做一些工作，有两点值得我们注意的地方：</p>
+<ol>
+<li>在自定义的 ServiceContextListener 中获取 Spring 装配的实例对象，必须要将自定义 Listener 写到 Spring 的 ContextLoaderListener 之后。</li>
+<li>新手可能直接会在自定义 Listener中<code>new UserService()</code>，这么做说明根本没有理解 Spring 的IoC，<code>new</code>出来的对象与 Spring Bean 工厂生成的根本不是同一个实例，其中的各种 dao 必然没有注入，当调用需要 dao 的方法时（往往是必然的）则会报 NPE。</li>
+</ol>
+<p>通过这个例子可以对 ServletContextListener 有更深的认识，而对于其他两个 Listener，除了监听的对象不同，在用法上都是大同小异，在理解了其调用关系之后应该能够很快上手使用。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java-Web/" rel="tag"># Java Web</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/04/23/Listener总结[2]-域对象属性改变监听器/" rel="prev" title="Listener总结[2]-域对象属性改变监听器">
+                Listener总结[2]-域对象属性改变监听器 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Kevin Zhang</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/KevinZY" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:zy1123581321@qq.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Listener"><span class="nav-number">1.</span> <span class="nav-text">Listener</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#域对象创建和销毁的事件监听器"><span class="nav-number">1.1.</span> <span class="nav-text">域对象创建和销毁的事件监听器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ServletContextListener-的应用———-Spring-的入口"><span class="nav-number">1.1.1.</span> <span class="nav-text">ServletContextListener 的应用——— Spring 的入口</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kevin Zhang</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/canvas_sphere.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
