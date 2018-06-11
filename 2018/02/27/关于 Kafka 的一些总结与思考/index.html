@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="架构," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="关于Kafka 的一些总结与思考 kafka，近年来比较流行的一款分布式消息订阅发布系统。由于其高吞吐量、可持久化以及分布式等特点得到了广泛的应用。最近部门搭建 Monitor 日志系统，需要在 Monitor Server 和产生日志的应用中间放置一个消息队列做为缓冲，在解耦应用的同时提高 Monitor 系统的峰值处理能力，最终选定了使用 kafka。在做系统的过程中学习到了不少Kafka的设">
+<meta name="keywords" content="架构">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于 Kafka 的一些总结与思考">
+<meta property="og:url" content="http://kevinzy.github.io/2018/02/27/关于 Kafka 的一些总结与思考/index.html">
+<meta property="og:site_name" content="Hyperion">
+<meta property="og:description" content="关于Kafka 的一些总结与思考 kafka，近年来比较流行的一款分布式消息订阅发布系统。由于其高吞吐量、可持久化以及分布式等特点得到了广泛的应用。最近部门搭建 Monitor 日志系统，需要在 Monitor Server 和产生日志的应用中间放置一个消息队列做为缓冲，在解耦应用的同时提高 Monitor 系统的峰值处理能力，最终选定了使用 kafka。在做系统的过程中学习到了不少Kafka的设">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://kevinzy.github.io/images/关于%20Kafka%20的一些总结与思考/Kafka%20结构.png">
+<meta property="og:image" content="http://kevinzy.github.io/images/关于%20Kafka%20的一些总结与思考/Partition%20分布.png">
+<meta property="og:image" content="http://kevinzy.github.io/images/关于%20Kafka%20的一些总结与思考/MessageQueue.png">
+<meta property="og:image" content="file:///var/folders/0t/cmf92t_x02jg_4p98vbhqdbc0000gn/T/WizNote/6363cf54-06a4-4086-991b-f54f7bab695b/index_files/c12f9658eb69d23dd486dd193aeb07fe.png">
+<meta property="og:image" content="file:///var/folders/0t/cmf92t_x02jg_4p98vbhqdbc0000gn/T/WizNote/6363cf54-06a4-4086-991b-f54f7bab695b/index_files/87fcdc317e267bb92d337eea88694b10.png">
+<meta property="og:image" content="file:///var/folders/0t/cmf92t_x02jg_4p98vbhqdbc0000gn/T/WizNote/6363cf54-06a4-4086-991b-f54f7bab695b/index_files/cdfe1bb7cdebcb003b7a18e0f358e3b3.png">
+<meta property="og:image" content="file:///var/folders/0t/cmf92t_x02jg_4p98vbhqdbc0000gn/T/WizNote/6363cf54-06a4-4086-991b-f54f7bab695b/index_files/4b86b5c114e4c92419ab6601b835020d.png">
+<meta property="og:image" content="http://kevinzy.github.io/images/关于%20Kafka%20的一些总结与思考/Replica%20分布.png">
+<meta property="og:updated_time" content="2018-06-11T15:09:24.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="关于 Kafka 的一些总结与思考">
+<meta name="twitter:description" content="关于Kafka 的一些总结与思考 kafka，近年来比较流行的一款分布式消息订阅发布系统。由于其高吞吐量、可持久化以及分布式等特点得到了广泛的应用。最近部门搭建 Monitor 日志系统，需要在 Monitor Server 和产生日志的应用中间放置一个消息队列做为缓冲，在解耦应用的同时提高 Monitor 系统的峰值处理能力，最终选定了使用 kafka。在做系统的过程中学习到了不少Kafka的设">
+<meta name="twitter:image" content="http://kevinzy.github.io/images/关于%20Kafka%20的一些总结与思考/Kafka%20结构.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://kevinzy.github.io/2018/02/27/关于 Kafka 的一些总结与思考/"/>
+
+
+
+
+
+  <title>关于 Kafka 的一些总结与思考 | Hyperion</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hyperion</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://kevinzy.github.io/2018/02/27/关于 Kafka 的一些总结与思考/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kevin Zhang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hyperion">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">关于 Kafka 的一些总结与思考</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-27T12:10:42+08:00">
+                2018-02-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="关于Kafka-的一些总结与思考"><a href="#关于Kafka-的一些总结与思考" class="headerlink" title="关于Kafka 的一些总结与思考"></a>关于Kafka 的一些总结与思考</h2><blockquote>
+<p>kafka，近年来比较流行的一款分布式消息订阅发布系统。由于其高吞吐量、可持久化以及分布式等特点得到了广泛的应用。最近部门搭建 Monitor 日志系统，需要在 Monitor Server 和产生日志的应用中间放置一个消息队列做为缓冲，在解耦应用的同时提高 Monitor 系统的峰值处理能力，最终选定了使用 kafka。在做系统的过程中学习到了不少Kafka的设计逻辑，对互联网系统的认识很有帮助。下面主要就 kafka 的基本概念和配置进行一些总结。</p>
+</blockquote>
+<h3 id="消息队列"><a href="#消息队列" class="headerlink" title="消息队列"></a>消息队列</h3><p>在目前的消息队列系统中，有几个重要的概念，可能在不同的系统中叫法不一样，但是其在系统中的作用是互通的。</p>
+<ul>
+<li><p>生产者(producer)：消息的产生方，将“消息”这个实体发送到队列中。</p>
+</li>
+<li><p>消费者(consumer)：消息的使用方，从队列中获取消息。</p>
+</li>
+<li><p>消息(Record)：生产和消费的内容，实际要传输的数据。</p>
+</li>
+<li><p>主题(topic)：用于将消息进行分类，生产者和消费者可以指定 topic 进行生产和消费行为，可以将topic 理解为一个用于存放消息的队列。</p>
+</li>
+<li><p>偏移量(offset)：用于标识被消费的消息所在队列中的位置。</p>
+</li>
+</ul>
+<p>除了这些，kafka 中还有一些特有的概念：</p>
+<ul>
+<li><p>消费者组(consumer group)：将消费者分组，维护其在不同 topic 之间的订阅权限。</p>
+</li>
+<li><p>broker：分布式系统中一个具体的服务，一个 kafka 集群一般由多个 broker 组成，以达到高可用的目的。</p>
+</li>
+<li><p>分区(partition)：物理概念，在一个 topic 内部可以有若干个 partition，每个 partition 是实际储存消息的队列，若有多台broker，partition会尽量被分配到不同的broker上。<strong>生产者产生的消息只会进入到其中一个 partiton 中</strong>。</p>
+</li>
+</ul>
+<p><img src="/images/关于 Kafka 的一些总结与思考/Kafka 结构.png" alt="Kafka 结构"></p>
+<h4 id="Consumer-Group"><a href="#Consumer-Group" class="headerlink" title="Consumer Group"></a>Consumer Group</h4><p>简单来讲，消息队列模型可以分为两种：基础队列模式和发布-订阅模式。在基础队列模式中，一条消息只能由一个消费者进行处理，而在发布-订阅模式中，一条消息可以分发给所有“订阅”了此主题(topic)的消费者。kafka 将这两种模型合二为一，产生了消费者组(group)的概念。在不同的group间，消息分发遵循发布-订阅模式，即消息会被分发到所有订阅了此topic的 group 中，而在 group 内部，消息分发遵循基础队列模式，即消息在 group 中最终只会由一个消费者消费掉。</p>
+<h4 id="Partition"><a href="#Partition" class="headerlink" title="Partition"></a>Partition</h4><p>kafka 不仅在 Consumer 层面做了分组控制，在 topic 队列中同样存在着“分区”的概念。在基本模式中，一个 topic 就是一个队列，这样虽然非常清晰，但是在大数据量下，其性能直接受限于物理机。在分布式环境中，若采用简单的“一个队列”模型，会导致服务器压力分布不均，假设服务器A(broker A) 中的 topic 消息压力较大，而其他机器无法帮助其分担，那么可能会直接导致服务器A(broker A) 崩掉。</p>
+<p>在 kafka 的设计中，topic 是逻辑概念，partition 是物理概念，对于简单的 producer 和 consumer ，两者均不需要考虑 partiton 的存在，只需要在 topic 层面进行操作即可。partiton 的设计对于分布式系统有重要意义，kafka 将一个 topic 打散成为若干 partition，并且尽量保证 partition 能平均分布到集群中的服务器(broker)上。这样也就解决了两个重要问题— <strong><em>负载均衡</em></strong> 和 <strong><em>水平扩展</em></strong>。</p>
+<p><img src="/images/关于 Kafka 的一些总结与思考/Partition 分布.png" alt="Partition分布"></p>
+<p>在 patition 方面还涉及到分区备份以及 leader 的选取，将在后面的扩展中进行总结。</p>
+<h3 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h3><ol>
+<li>消息系统</li>
+</ol>
+<p>kafka最基本的使用方式，基于订阅-发布的消息系统。和其他消息队列产品相同，主要为系统带来了异步处理和解耦的特性。</p>
+<p>在这种场景下，kafka是应用之间联系的纽带，也是一个标准，有的文章将其比作人体的神经系统。这是很准确的，身体的许多器官之间之所以可以相互协作调用(最常见的就是大脑控制身体的运动)，完全依靠神经系统传递电信号。这些信号就是一个个消息，大脑产生这些信号，并将信号交给神经系统让它传递给具体的器官，器官接收到信号后根据信号的指令进行具体的操作。</p>
+<p>我们可以看一下消息系统的特点：</p>
+<p>解耦。各个应用之间更独立，不必受其他应用的影响。大家都通过一个简单的消息队列来联系，不必受其他应用返回值的影响，当一个应用挂掉之后其他应用还是可以正常运行</p>
+<p>异步，提速。所谓提速，是指有大量并发的情况下，系统能够尽快的做出回应。如果是传统的同步调用服务，在这项业务没有完成之前，线程一直处于繁忙的状态，当并发量增加时，新的请求将会被阻塞，直至前面的线程处理完。更糟糕的情况是处于多个服务协作的系统中，当有RPC请求时，当前系统的线程将会处于阻塞状态，对于分秒必争的CPU资源，线程阻塞是非常昂贵的开销。</p>
+<p><img src="/images/关于 Kafka 的一些总结与思考/MessageQueue.png" alt="MQ 典型应用"></p>
+<p>Message Queue的典型应用</p>
+<p>通过消息系统，可以有效使CPU避免由于RPC引起的阻塞。当应用需要通过RPC调用其他服务时，可以直接向消息队列发送一份信息，之后马上返回继续处理。这样便可以将CPU的资源最大化利用。但是这需要架构师考虑清楚几点：</p>
+<ul>
+<li><p>系统是否能够容忍暂时的不一致性，或者说系统是否必须立马知道RPC执行的结果。显然，引入消息系统，当上层消息发送完消息并继续往下执行时，有一个潜在的逻辑是<strong>有下游系统会去做这件事</strong>， 但是实际做没做，并不知道。</p>
+</li>
+<li><p>引入消息系统带来的收益是否超过了引入的成本。引入成本自然不必说，新系统的布置维护等都是需要考虑的因素。如果盲目的照搬，“别人都这样用，我们也这样用”是架构师的大忌，只有适合自己业务的架构才是最好的架构。</p>
+</li>
+</ul>
+<ol>
+<li>日志系统</li>
+</ol>
+<p>其实日志系统使用Kafka也算消息队列的一种应用，只是由于日志系统的特性，使得消息队列在这里格外重要。</p>
+<p>对于日志系统来说，需要将若干应用的日志统一搜集，然后进行整理与存储。日志系统的特点在于其量大、可能存在峰值，若使用单一的App向日志系统Push的模式，服务器的压力可想而知。更关键的一点在于日志系统作为Monitor System的一部分，其本身的稳定性要求就很高，一旦日志系统挂掉，可能会丢失大量的系统日志。</p>
+<p>这时候Kafka(消息队列)的有势就显现出来了：</p>
+<p>第一，切断了单个App与日志系统的直接联系，解耦。因为日志的搜集与分析实际上App本身并不很关心，将其发送到MQ就够了，至于后续怎么处理，那App本身可以不管。</p>
+<p>第二，削峰，有了MQ作为缓冲，当不同应用有大量Log需要传输时，数据有了合适的积压点，在大流量下不至于将日志系统冲垮。而Kafka中的数据是以文件的形式落地在硬盘上的，保证了数据不会丢失，即便日志系统未来得及消费，MQ中的消息也会保存一段时间(可配置，一般一周就可以了)。</p>
+<p>第三，扩展性。这一点是显而易见的，现在微服务的概念非常流行，当企业自身的服务越来越多，日志的量也会越来越大。得益于Kafka天生的集群特性，很容易可以添加broker以拓展MQ的性能与容量。</p>
+<p>上述的使用场景描述的还是比较笼统，实际业务中需要仔细考虑遇到的瓶颈在哪里，而引入MQ是否能够解决这些问题，这需要对MQ的特点有详细的了解。再者对于开发人员，不能一味照搬，无论在成本(开发成本，服务器成本，后期维护成本)还是使用方法上都需要慎重考虑。同时也是为自己提个醒，在使用一项技术之前一定要搞清楚为什么要用它。</p>
+<h3 id="使用与配置"><a href="#使用与配置" class="headerlink" title="使用与配置"></a>使用与配置</h3><h4 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h4><p>了解完Kafka的基本概念之后我们可以简单的上手操作一下，通过Kafka自带的命令行工具和对一些参数的调整，直观的感受一下Kafka的运作方式。</p>
+<p>Kafka依赖zookeeper来实现集群，所以我们先使用默认的配置文件启动zk:</p>
+<p><img src="file:///var/folders/0t/cmf92t_x02jg_4p98vbhqdbc0000gn/T/WizNote/6363cf54-06a4-4086-991b-f54f7bab695b/index_files/c12f9658eb69d23dd486dd193aeb07fe.png" alt="启动ZK"></p>
+<p><img src="file:///var/folders/0t/cmf92t_x02jg_4p98vbhqdbc0000gn/T/WizNote/6363cf54-06a4-4086-991b-f54f7bab695b/index_files/87fcdc317e267bb92d337eea88694b10.png" alt="ZK启动之后"></p>
+<p>ZK启动之后</p>
+<p>我们继续使用默认配置启动一个Kafka实例(Broker):</p>
+<p><img src="file:///var/folders/0t/cmf92t_x02jg_4p98vbhqdbc0000gn/T/WizNote/6363cf54-06a4-4086-991b-f54f7bab695b/index_files/cdfe1bb7cdebcb003b7a18e0f358e3b3.png" alt="启动Kafka"></p>
+<p>现在我们有一个运行的zk实例和一个Kafka broker，它已经可以实现MQ的基本功能。接下来我们需要一个Producer和一个Consumer来进行测试。Kafka的包中为我们提供了两个命令行工具：kafka-console-producer和kafka-console-consumer，使得我们可以通过命令行来发送和消费消息。</p>
+<p>通过命令行启动Producer和Consumer：</p>
+<p><img src="file:///var/folders/0t/cmf92t_x02jg_4p98vbhqdbc0000gn/T/WizNote/6363cf54-06a4-4086-991b-f54f7bab695b/index_files/4b86b5c114e4c92419ab6601b835020d.png" alt="启动Producer"></p>
+<p>在Producer中发送信息，在Consumer中接收并显示。</p>
+<p>这里为了演示使用的是官方提供的命令行工具，Kafka还提供了非常易用的Java API供开发者使用，能够很方便的建立Producer和Consumer。</p>
+<h4 id="集群配置"><a href="#集群配置" class="headerlink" title="集群配置"></a>集群配置</h4><p>以上简单的展示了Kafka的运行机制，但无论是zk还是Kafka都只有单个实例。由于消息队列所需承载的压力往往较大，同时又要保证数据不易丢失，在实际生产环境中往往是以集群的形式进行配置，可以有效的避免单点故障。</p>
+<p>下面我我们就以集群的形式对Kafka进行配置与启动。</p>
+<h3 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h3><h4 id="Leader如何选举？"><a href="#Leader如何选举？" class="headerlink" title="Leader如何选举？"></a>Leader如何选举？</h4><p>首先何谓Leader？在之前的内容中我们了解到了Kafka将整个Topic拆分为若干个Partition的作用，使每个Partition可以分布在不同的Broker上，以保证负载均衡。但是这样还不够，因为无法避免单点故障。</p>
+<p>读者可能会问：我这已经将消息分布到不同的Partition中了，怎么还有单点故障呢？这里有一个非常重要的逻辑，那就是一条消息只能进入一个Partition中，我们区分Partition、使其分布在不同的Broker上，只是为了保证更大的负载量和更有效的利用服务器资源。但是当其中一个Broker突然挂掉了怎么办呢？在这个Broker上的那些Partition中还有未被消费的消息，如果没有补救措施，它们就这样丢失了吗？</p>
+<p>Kafka当然考虑到了这点，所以有了<strong>副本</strong>和<strong>Leader</strong>的概念。</p>
+<p>为了保证系统的高可用，每一个分区（Partition）都会有一定数量的副本（Replica），这样如果部分服务器不可用，副本所在的服务器就会接管上来，保证应用的持续性。同时为了保证较高的处理效率，消息的读写都是固定在同一个副本上的，而这个副本就是所谓的Leader，其他作为备份存在的副本则被称为Follower。值得注意的一点是在创建Topic配置参数时，副本（Replica）的数量不可以超过Broker的数量。</p>
+<p><img src="/images/关于 Kafka 的一些总结与思考/Replica 分布.png" alt="Replica分布"></p>
+<p>为了保证较高的处理效率，消息的读写都是由Leader来完成，那怎样从众多Follower中选举出Leader就成了重要的话题。</p>
+<p>这里不得不提到两个概念：AR（Assigned Replicas）和ISR（In-Sync Replicas）。当我们为一个Topic设置了多个Replica的时候，这些所有的副本统称为AR，AR中的Follower会不断的从Leader中同步数据，同步的过程必然有所延迟，这是由于不同机器的性能等因素导致的。</p>
+<p>ISR是AR的子集，它表示的是与Leader同步的Follower的集合。当Follower从Leader同步，延迟超过了阈值，将会被Leader从ISR中踢出，Kafka 0.10.x中的参数<code>replica.lag.time.max.ms</code>，表示了延迟的阈值。</p>
+<p>ISR这个集合非常重要，正是它保证了Kafka的高可用性。当一条消息被Produce或者需要被Consume的时候，Leader需要等到ISR中的所有副本将本次操作的状态同步，再返回出结果。这样虽然在性能上有所下降，但是大大提高了Kafka的高可用性。</p>
+<p>当Leader挂掉，Kafka会从ISR中选取一个Follower作为新的Leader，因为ISR中Follower的数据是与前任Leader同步的，所以其中任何一个Follower都可以直接充当Leader的角色。</p>
+<p>Kafka的高可用性有很多值得探讨的地方，篇幅所限这里就不再深入讨论，推荐一篇不错的文章，有兴趣的朋友可以看看：</p>
+<p><a href="http://www.importnew.com/25247.html" target="_blank" rel="noopener">kafka 数据可靠性深度解读</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/架构/" rel="tag"><i class="fa fa-tag"></i> 架构</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/16/参数检查和null/" rel="next" title="参数检查和 null">
+                <i class="fa fa-chevron-left"></i> 参数检查和 null
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpeg"
+                alt="Kevin Zhang" />
+            
+              <p class="site-author-name" itemprop="name">Kevin Zhang</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/KevinZY" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:zy1123581321@qq.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#关于Kafka-的一些总结与思考"><span class="nav-number">1.</span> <span class="nav-text">关于Kafka 的一些总结与思考</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#消息队列"><span class="nav-number">1.1.</span> <span class="nav-text">消息队列</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Consumer-Group"><span class="nav-number">1.1.1.</span> <span class="nav-text">Consumer Group</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Partition"><span class="nav-number">1.1.2.</span> <span class="nav-text">Partition</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#场景"><span class="nav-number">1.2.</span> <span class="nav-text">场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用与配置"><span class="nav-number">1.3.</span> <span class="nav-text">使用与配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#启动"><span class="nav-number">1.3.1.</span> <span class="nav-text">启动</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#集群配置"><span class="nav-number">1.3.2.</span> <span class="nav-text">集群配置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#扩展"><span class="nav-number">1.4.</span> <span class="nav-text">扩展</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Leader如何选举？"><span class="nav-number">1.4.1.</span> <span class="nav-text">Leader如何选举？</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kevin Zhang</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three-waves.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
