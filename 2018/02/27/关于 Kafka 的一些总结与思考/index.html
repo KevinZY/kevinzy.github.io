@@ -5,7 +5,7 @@
   
 
 
-<html class="theme-next pisces use-motion" lang="zh-Hans">
+<html class="theme-next gemini use-motion" lang="zh-Hans">
 <head>
   <meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -90,12 +90,13 @@
 <meta property="og:image" content="http://kevinzy.github.io/images/关于%20Kafka%20的一些总结与思考/Kafka%20结构.png">
 <meta property="og:image" content="http://kevinzy.github.io/images/关于%20Kafka%20的一些总结与思考/Partition%20分布.png">
 <meta property="og:image" content="http://kevinzy.github.io/images/关于%20Kafka%20的一些总结与思考/MessageQueue.png">
-<meta property="og:image" content="file:///var/folders/0t/cmf92t_x02jg_4p98vbhqdbc0000gn/T/WizNote/6363cf54-06a4-4086-991b-f54f7bab695b/index_files/c12f9658eb69d23dd486dd193aeb07fe.png">
-<meta property="og:image" content="file:///var/folders/0t/cmf92t_x02jg_4p98vbhqdbc0000gn/T/WizNote/6363cf54-06a4-4086-991b-f54f7bab695b/index_files/87fcdc317e267bb92d337eea88694b10.png">
-<meta property="og:image" content="file:///var/folders/0t/cmf92t_x02jg_4p98vbhqdbc0000gn/T/WizNote/6363cf54-06a4-4086-991b-f54f7bab695b/index_files/cdfe1bb7cdebcb003b7a18e0f358e3b3.png">
-<meta property="og:image" content="file:///var/folders/0t/cmf92t_x02jg_4p98vbhqdbc0000gn/T/WizNote/6363cf54-06a4-4086-991b-f54f7bab695b/index_files/4b86b5c114e4c92419ab6601b835020d.png">
+<meta property="og:image" content="http://kevinzy.github.io/images/关于%20Kafka%20的一些总结与思考/启动%20ZK.png">
+<meta property="og:image" content="http://kevinzy.github.io/images/关于%20Kafka%20的一些总结与思考/ZK%20启动之后.png">
+<meta property="og:image" content="http://kevinzy.github.io/images/关于%20Kafka%20的一些总结与思考/启动%20Kafka.png">
+<meta property="og:image" content="http://kevinzy.github.io/images/关于%20Kafka%20的一些总结与思考/启动%20Producer.png">
+<meta property="og:image" content="http://kevinzy.github.io/images/关于%20Kafka%20的一些总结与思考/启动%20Consumer.png">
 <meta property="og:image" content="http://kevinzy.github.io/images/关于%20Kafka%20的一些总结与思考/Replica%20分布.png">
-<meta property="og:updated_time" content="2018-06-11T15:09:24.000Z">
+<meta property="og:updated_time" content="2018-06-11T15:29:12.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="关于 Kafka 的一些总结与思考">
 <meta name="twitter:description" content="关于Kafka 的一些总结与思考 kafka，近年来比较流行的一款分布式消息订阅发布系统。由于其高吞吐量、可持久化以及分布式等特点得到了广泛的应用。最近部门搭建 Monitor 日志系统，需要在 Monitor Server 和产生日志的应用中间放置一个消息队列做为缓冲，在解耦应用的同时提高 Monitor 系统的峰值处理能力，最终选定了使用 kafka。在做系统的过程中学习到了不少Kafka的设">
@@ -107,7 +108,7 @@
   var NexT = window.NexT || {};
   var CONFIG = {
     root: '/',
-    scheme: 'Pisces',
+    scheme: 'Gemini',
     version: '5.1.4',
     sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
     fancybox: true,
@@ -389,15 +390,15 @@
 <p>上述的使用场景描述的还是比较笼统，实际业务中需要仔细考虑遇到的瓶颈在哪里，而引入MQ是否能够解决这些问题，这需要对MQ的特点有详细的了解。再者对于开发人员，不能一味照搬，无论在成本(开发成本，服务器成本，后期维护成本)还是使用方法上都需要慎重考虑。同时也是为自己提个醒，在使用一项技术之前一定要搞清楚为什么要用它。</p>
 <h3 id="使用与配置"><a href="#使用与配置" class="headerlink" title="使用与配置"></a>使用与配置</h3><h4 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h4><p>了解完Kafka的基本概念之后我们可以简单的上手操作一下，通过Kafka自带的命令行工具和对一些参数的调整，直观的感受一下Kafka的运作方式。</p>
 <p>Kafka依赖zookeeper来实现集群，所以我们先使用默认的配置文件启动zk:</p>
-<p><img src="file:///var/folders/0t/cmf92t_x02jg_4p98vbhqdbc0000gn/T/WizNote/6363cf54-06a4-4086-991b-f54f7bab695b/index_files/c12f9658eb69d23dd486dd193aeb07fe.png" alt="启动ZK"></p>
-<p><img src="file:///var/folders/0t/cmf92t_x02jg_4p98vbhqdbc0000gn/T/WizNote/6363cf54-06a4-4086-991b-f54f7bab695b/index_files/87fcdc317e267bb92d337eea88694b10.png" alt="ZK启动之后"></p>
+<p><img src="/images/关于 Kafka 的一些总结与思考/启动 ZK.png" alt="启动ZK"></p>
+<p><img src="/images/关于 Kafka 的一些总结与思考/ZK 启动之后.png" alt="ZK启动之后"></p>
 <p>ZK启动之后</p>
 <p>我们继续使用默认配置启动一个Kafka实例(Broker):</p>
-<p><img src="file:///var/folders/0t/cmf92t_x02jg_4p98vbhqdbc0000gn/T/WizNote/6363cf54-06a4-4086-991b-f54f7bab695b/index_files/cdfe1bb7cdebcb003b7a18e0f358e3b3.png" alt="启动Kafka"></p>
+<p><img src="/images/关于 Kafka 的一些总结与思考/启动 Kafka.png" alt="启动Kafka"></p>
 <p>现在我们有一个运行的zk实例和一个Kafka broker，它已经可以实现MQ的基本功能。接下来我们需要一个Producer和一个Consumer来进行测试。Kafka的包中为我们提供了两个命令行工具：kafka-console-producer和kafka-console-consumer，使得我们可以通过命令行来发送和消费消息。</p>
 <p>通过命令行启动Producer和Consumer：</p>
-<p><img src="file:///var/folders/0t/cmf92t_x02jg_4p98vbhqdbc0000gn/T/WizNote/6363cf54-06a4-4086-991b-f54f7bab695b/index_files/4b86b5c114e4c92419ab6601b835020d.png" alt="启动Producer"></p>
-<p>在Producer中发送信息，在Consumer中接收并显示。</p>
+<p><img src="/images/关于 Kafka 的一些总结与思考/启动 Producer.png" alt="启动Producer并发送一条消息"></p>
+<p><img src="/images/关于 Kafka 的一些总结与思考/启动 Consumer.png" alt="启动Consumer并发送一条消息"></p>
 <p>这里为了演示使用的是官方提供的命令行工具，Kafka还提供了非常易用的Java API供开发者使用，能够很方便的建立Producer和Consumer。</p>
 <h4 id="集群配置"><a href="#集群配置" class="headerlink" title="集群配置"></a>集群配置</h4><p>以上简单的展示了Kafka的运行机制，但无论是zk还是Kafka都只有单个实例。由于消息队列所需承载的压力往往较大，同时又要保证数据不易丢失，在实际生产环境中往往是以集群的形式进行配置，可以有效的避免单点故障。</p>
 <p>下面我我们就以集群的形式对Kafka进行配置与启动。</p>
@@ -632,7 +633,7 @@
 
 
 
-  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
 
 
 
@@ -679,10 +680,9 @@
   
 
 
+  
 
 
-  
-  
 
 
 
@@ -724,12 +724,7 @@
 
   
   
-    <script type="text/javascript" src="/lib/three/three.min.js"></script>
-  
-
-  
-  
-    <script type="text/javascript" src="/lib/three/three-waves.min.js"></script>
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
   
 
 
