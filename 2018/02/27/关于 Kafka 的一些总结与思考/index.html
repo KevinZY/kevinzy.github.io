@@ -96,7 +96,7 @@
 <meta property="og:image" content="http://kevinzy.github.io/images/关于%20Kafka%20的一些总结与思考/启动%20Producer.png">
 <meta property="og:image" content="http://kevinzy.github.io/images/关于%20Kafka%20的一些总结与思考/启动%20Consumer.png">
 <meta property="og:image" content="http://kevinzy.github.io/images/关于%20Kafka%20的一些总结与思考/Replica%20分布.png">
-<meta property="og:updated_time" content="2018-06-11T15:29:12.000Z">
+<meta property="og:updated_time" content="2018-06-11T15:47:27.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="关于 Kafka 的一些总结与思考">
 <meta name="twitter:description" content="关于Kafka 的一些总结与思考 kafka，近年来比较流行的一款分布式消息订阅发布系统。由于其高吞吐量、可持久化以及分布式等特点得到了广泛的应用。最近部门搭建 Monitor 日志系统，需要在 Monitor Server 和产生日志的应用中间放置一个消息队列做为缓冲，在解耦应用的同时提高 Monitor 系统的峰值处理能力，最终选定了使用 kafka。在做系统的过程中学习到了不少Kafka的设">
@@ -392,16 +392,16 @@
 <p>Kafka依赖zookeeper来实现集群，所以我们先使用默认的配置文件启动zk:</p>
 <p><img src="/images/关于 Kafka 的一些总结与思考/启动 ZK.png" alt="启动ZK"></p>
 <p><img src="/images/关于 Kafka 的一些总结与思考/ZK 启动之后.png" alt="ZK启动之后"></p>
-<p>ZK启动之后</p>
-<p>我们继续使用默认配置启动一个Kafka实例(Broker):</p>
+<p>ZK启动之后，我们继续使用默认配置启动一个Kafka实例(Broker):</p>
 <p><img src="/images/关于 Kafka 的一些总结与思考/启动 Kafka.png" alt="启动Kafka"></p>
 <p>现在我们有一个运行的zk实例和一个Kafka broker，它已经可以实现MQ的基本功能。接下来我们需要一个Producer和一个Consumer来进行测试。Kafka的包中为我们提供了两个命令行工具：kafka-console-producer和kafka-console-consumer，使得我们可以通过命令行来发送和消费消息。</p>
-<p>通过命令行启动Producer和Consumer：</p>
+<p>通过命令行启动Producer和Consumer，并发送一条测试消息：</p>
 <p><img src="/images/关于 Kafka 的一些总结与思考/启动 Producer.png" alt="启动Producer并发送一条消息"></p>
 <p><img src="/images/关于 Kafka 的一些总结与思考/启动 Consumer.png" alt="启动Consumer并发送一条消息"></p>
 <p>这里为了演示使用的是官方提供的命令行工具，Kafka还提供了非常易用的Java API供开发者使用，能够很方便的建立Producer和Consumer。</p>
 <h4 id="集群配置"><a href="#集群配置" class="headerlink" title="集群配置"></a>集群配置</h4><p>以上简单的展示了Kafka的运行机制，但无论是zk还是Kafka都只有单个实例。由于消息队列所需承载的压力往往较大，同时又要保证数据不易丢失，在实际生产环境中往往是以集群的形式进行配置，可以有效的避免单点故障。</p>
 <p>下面我我们就以集群的形式对Kafka进行配置与启动。</p>
+<p>待补充。。。</p>
 <h3 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h3><h4 id="Leader如何选举？"><a href="#Leader如何选举？" class="headerlink" title="Leader如何选举？"></a>Leader如何选举？</h4><p>首先何谓Leader？在之前的内容中我们了解到了Kafka将整个Topic拆分为若干个Partition的作用，使每个Partition可以分布在不同的Broker上，以保证负载均衡。但是这样还不够，因为无法避免单点故障。</p>
 <p>读者可能会问：我这已经将消息分布到不同的Partition中了，怎么还有单点故障呢？这里有一个非常重要的逻辑，那就是一条消息只能进入一个Partition中，我们区分Partition、使其分布在不同的Broker上，只是为了保证更大的负载量和更有效的利用服务器资源。但是当其中一个Broker突然挂掉了怎么办呢？在这个Broker上的那些Partition中还有未被消费的消息，如果没有补救措施，它们就这样丢失了吗？</p>
 <p>Kafka当然考虑到了这点，所以有了<strong>副本</strong>和<strong>Leader</strong>的概念。</p>
