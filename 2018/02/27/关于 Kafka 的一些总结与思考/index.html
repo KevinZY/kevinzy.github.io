@@ -5,7 +5,7 @@
   
 
 
-<html class="theme-next gemini use-motion" lang="zh-Hans">
+<html class="theme-next mist use-motion" lang="zh-Hans">
 <head>
   <meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -96,7 +96,7 @@
 <meta property="og:image" content="http://kevinzy.github.io/images/关于%20Kafka%20的一些总结与思考/启动%20Producer.png">
 <meta property="og:image" content="http://kevinzy.github.io/images/关于%20Kafka%20的一些总结与思考/启动%20Consumer.png">
 <meta property="og:image" content="http://kevinzy.github.io/images/关于%20Kafka%20的一些总结与思考/Replica%20分布.png">
-<meta property="og:updated_time" content="2018-06-12T15:11:39.000Z">
+<meta property="og:updated_time" content="2018-06-12T15:19:52.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="关于 Kafka 的一些总结与思考">
 <meta name="twitter:description" content="关于Kafka 的一些总结与思考 kafka，近年来比较流行的一款分布式消息订阅发布系统。由于其高吞吐量、可持久化以及分布式等特点得到了广泛的应用。最近部门搭建 Monitor 日志系统，需要在 Monitor Server 和产生日志的应用中间放置一个消息队列做为缓冲，在解耦应用的同时提高 Monitor 系统的峰值处理能力，最终选定了使用 kafka。在做系统的过程中学习到了不少Kafka的设">
@@ -108,7 +108,7 @@
   var NexT = window.NexT || {};
   var CONFIG = {
     root: '/',
-    scheme: 'Gemini',
+    scheme: 'Mist',
     version: '5.1.4',
     sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
     fancybox: true,
@@ -370,7 +370,6 @@
 <p>解耦。各个应用之间更独立，不必受其他应用的影响。大家都通过一个简单的消息队列来联系，不必受其他应用返回值的影响，当一个应用挂掉之后其他应用还是可以正常运行</p>
 <p>异步，提速。所谓提速，是指有大量并发的情况下，系统能够尽快的做出回应。如果是传统的同步调用服务，在这项业务没有完成之前，线程一直处于繁忙的状态，当并发量增加时，新的请求将会被阻塞，直至前面的线程处理完。更糟糕的情况是处于多个服务协作的系统中，当有RPC请求时，当前系统的线程将会处于阻塞状态，对于分秒必争的CPU资源，线程阻塞是非常昂贵的开销。</p>
 <p><img src="/images/关于 Kafka 的一些总结与思考/MessageQueue.png" alt="MQ 典型应用"></p>
-<p>Message Queue的典型应用</p>
 <p>通过消息系统，可以有效使CPU避免由于RPC引起的阻塞。当应用需要通过RPC调用其他服务时，可以直接向消息队列发送一份信息，之后马上返回继续处理。这样便可以将CPU的资源最大化利用。但是这需要架构师考虑清楚几点：</p>
 <ul>
 <li><p>系统是否能够容忍暂时的不一致性，或者说系统是否必须立马知道RPC执行的结果。显然，引入消息系统，当上层消息发送完消息并继续往下执行时，有一个潜在的逻辑是<strong>有下游系统会去做这件事</strong>， 但是实际做没做，并不知道。</p>
@@ -630,7 +629,7 @@
 
 
 
-  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
 
 
 
@@ -677,13 +676,14 @@
   
 
 
+
+
+
+
+
+
   
-
-
-
-
-
-
+  
 
 
 
@@ -721,7 +721,12 @@
 
   
   
-    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+    <script type="text/javascript" src="/lib/three/three.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/canvas_sphere.min.js"></script>
   
 
 
@@ -736,13 +741,6 @@
 
   
   
-
-
-  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
-
-  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
-
-
 
   
   <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
